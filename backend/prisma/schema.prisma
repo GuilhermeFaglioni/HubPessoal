@@ -1,0 +1,78 @@
+// Arquivo: backend/prisma/schema.prisma
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String    @id @default(uuid())
+  full_name     String
+  email         String    @unique
+  password_hash String
+  has_completed_onboarding Boolean @default(false)
+  created_at    DateTime  @default(now())
+  
+  // Relações
+  Areas         Area[]
+  Tasks         Task[]
+  Subjects      Subject[]
+}
+
+model Area {
+  id         String   @id @default(uuid())
+  name       String
+  emoji      String?
+  user_id    String
+  created_at DateTime @default(now())
+
+  // Relações
+  user       User     @relation(fields: [user_id], references: [id])
+  Tasks      Task[]
+}
+
+model Task {
+  id           String    @id @default(uuid())
+  title        String
+  description  String?
+  due_date     DateTime?
+  is_completed Boolean   @default(false)
+  area_id      String
+  subject_id   String?
+  user_id      String
+  created_at   DateTime  @default(now())
+  updated_at   DateTime  @updatedAt
+
+  // Relações
+  area         Area      @relation(fields: [area_id], references: [id])
+  subject      Subject?  @relation(fields: [subject_id], references: [id])
+  user         User      @relation(fields: [user_id], references: [id])
+}
+
+model Subject {
+  id         String   @id @default(uuid())
+  name       String
+  user_id    String
+  created_at DateTime @default(now())
+
+  // Relações
+  user       User     @relation(fields: [user_id], references: [id])
+  Grades     Grade[]
+  Tasks      Task[]
+}
+
+model Grade {
+  id              String   @id @default(uuid())
+  evaluation_name String
+  score           Decimal
+  weight          Decimal  @default(1.0)
+  subject_id      String
+  created_at      DateTime @default(now())
+
+  // Relações
+  subject         Subject  @relation(fields: [subject_id], references: [id])
+}
