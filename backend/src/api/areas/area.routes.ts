@@ -5,7 +5,7 @@ import { authMiddleware } from "../../middleware/authMiddleware.js";
 
 const router = Router();
 
-// router.use(authMiddleware);
+router.use(authMiddleware);
 
 router.post('/createAreas', areaController.createAreas);
 
@@ -13,7 +13,7 @@ router.post('/createArea', areaController.createArea);
 
 router.put('/updateArea', areaController.updateArea);
 
-router.delete('/deleteArea', areaController.deleteArea);
+router.delete('/deleteArea/:userId/:areaId', areaController.deleteArea);
 
 router.get('/getAreasByUserId', areaController.getAreasByUserId);
 

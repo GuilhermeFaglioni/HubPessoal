@@ -103,10 +103,10 @@ export const updateArea = async(areaData: updateDataType) => {
     return updatedArea;
 }
 
-export const deleteArea = async(areaData: deleteDataType) => {
+export const deleteArea = async(areaId: string, userId: string) => {
     const user = await prisma.user.findUnique({
         where: {
-            id: areaData.userId
+            id: userId
         }
     })
 
@@ -114,21 +114,10 @@ export const deleteArea = async(areaData: deleteDataType) => {
         throw new Error('Usuário não encontrado');
     }
 
-    const area = await prisma.area.findUnique({
-        where: {
-            user_id: areaData.userId,
-            id: areaData.areaId
-        }
-    })
-
-    if(!area) {
-        throw new Error('Área não encontrada');
-    }
-
     await prisma.area.delete({
         where: {
-            user_id: areaData.userId,
-            id: areaData.areaId
+            user_id: userId,
+            id: areaId
         }
     })
 

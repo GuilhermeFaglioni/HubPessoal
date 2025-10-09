@@ -40,9 +40,17 @@ export const updateArea = async (req: Request, res: Response) => {
 
 export const deleteArea = async (req: Request, res: Response) => {
     try {
-        const areaData = req.body;
+        const {areaId, userId} = req.params;
 
-        const deletedArea = await areaService.deleteArea(areaData);
+        if(!areaId || !userId) {
+            throw new Error('ID da área ou do usuário não fornecido');
+        }
+
+        if(typeof areaId !== 'string' || typeof userId !== 'string') {
+            throw new Error('ID da área ou do usuário inválido');
+        }
+
+        const deletedArea = await areaService.deleteArea(areaId, userId);
 
         res.status(200).json(deletedArea);
     } catch (error: any) {

@@ -2,6 +2,7 @@ import express, { Express, Request, Response } from 'express';
 import cors from 'cors';
 import userRoutes from './api/users/user.routes.js';
 import areaRoutes from './api/areas/area.routes.js';
+import tasksRoutes from './api/tasks/tasks.routes.js';
 
 const app: Express = express();
 
@@ -16,5 +17,7 @@ app.get('/api/v1', (req: Request, res: Response) => {
 app.use('/api/v1/users', userRoutes);
 
 app.use('/api/v1/areas', areaRoutes);
+
+app.use('/api/v1/tasks', tasksRoutes);
 
 export default app;
