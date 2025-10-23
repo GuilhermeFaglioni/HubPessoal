@@ -60,3 +60,34 @@ export async function getAreas(userId: string) {
     throw error
   }
 }
+
+export async function getAreasWithTasks(userId: string) {
+  try {
+    const response = await api.get(paths.getAreasWithTasks, {
+      params: { userId },
+    })
+    return response.data
+  } catch (error) {
+    throw error
+  }
+}
+
+export async function deleteArea(userId: string, areaId: string) {
+  try {
+    const url = `${paths.deleteArea}/${userId}/${areaId}`
+    const response = await api.delete(url)
+    return response.data
+  } catch (error) {
+    throw error
+  }
+}
+
+export async function getEmojiHash(userId: string) {
+  try {
+    const response = await api.get(paths.getEmojiHashMap, { params: { userId } })
+
+    return response.data
+  } catch (error) {
+    throw error
+  }
+}

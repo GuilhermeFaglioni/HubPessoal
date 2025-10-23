@@ -54,7 +54,7 @@ export const toggleTask = async(req: Request, res: Response) => {
             throw new Error('IDs não encontrados')
         }
 
-        const toggleCompletion = await taskService.toggleCompletion(userId.toString(), taskId.toString())
+        const toggleCompletion = await taskService.toggleCompletion(userId, taskId)
 
         res.status(200).json(toggleCompletion)
     } catch(error: any) {
@@ -62,18 +62,48 @@ export const toggleTask = async(req: Request, res: Response) => {
     }
 }
 
-export const deleteTask = async(req: Request, res: Response) => {
+export const toggleAllActive = async (req: Request, res: Response) => {
     try {
-        const {taskId, userId} = req.params
+        const {areaId, userId} = req.params
 
-        if(!userId || !taskId) {
+        if(!userId || !areaId) {
             throw new Error('IDs não encontrados')
         }
 
-        const deleteTask = await taskService.deleteTask(userId.toString(), taskId.toString())
+        const toggleActive = await taskService.toggleAllActive(userId, areaId)
+
+        res.status(200).json(toggleActive)
+    } catch(error: any) {
+        res.status(400).json({message: error.message})
+    }
+}
+
+export const deleteTask = async(req: Request, res: Response) => {
+    try {
+        const {taskId} = req.params
+        if(!taskId) {
+            throw new Error('ID não encontrado')
+        }
+
+        const deleteTask = await taskService.deleteTask(taskId)
 
         res.status(200).json(deleteTask)
     } catch(error:any) {
+        res.status(400).json({message: error.message})
+    }
+}
+
+export const getTodoListTasks = async(req: Request, res: Response) => {
+    try {
+        const userId = req.query.userId
+        if(!userId) {
+            throw Error('ID não encontrado')
+        }
+        
+        const todoListTasks = await taskService.getTasksByDate(userId.toString());
+
+        res.status(200).json(todoListTasks)
+    } catch(error: any) {
         res.status(400).json({message: error.message})
     }
 }

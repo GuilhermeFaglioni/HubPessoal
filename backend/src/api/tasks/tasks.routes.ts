@@ -12,10 +12,14 @@ router.post('/createTask', taskController.creatTask);
 
 router.get('/getTasksByUserId', taskController.listAllTasksByUserId)
 
+router.get('/getTodoListTasks', taskController.getTodoListTasks)
+
 router.put('/updateTask', taskController.updateTask)
 
 router.patch('/:taskId/:userId/toggle', taskController.toggleTask)
 
-router.delete('/deleteTask/:taskId/:userId', taskController.deleteTask)
+router.put('/:areaId/:userId/toggleAllActive', taskController.toggleAllActive)
+
+router.delete('/deleteTask/:taskId', taskController.deleteTask)
 
 export default router;

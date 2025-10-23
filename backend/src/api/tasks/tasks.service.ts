@@ -1,4 +1,5 @@
 import prisma from "../../lib/prisma.js";
+import { startOfDay, addDays } from "date-fns";
 
 interface ICreateTaskData {
   userId: string;
@@ -66,10 +67,9 @@ export const listAllTasksByUserId = async (userId: string) => {
 };
 
 export const updateTask = async (taskData: IUpdateTaskData) => {
-  const existingTask = await prisma.task.findUnique({
+  const existingTask = await prisma.task.findFirst({
     where: {
       id: taskData.id,
-      user_id: taskData.userId,
     },
   });
 
@@ -119,11 +119,10 @@ export const toggleCompletion = async (userId: string, taskId: string) => {
   return toggleTask;
 };
 
-export const deleteTask = async (userId: string, taskId: string) => {
+export const deleteTask = async (taskId: string) => {
   const existingTask = await prisma.task.findUnique({
     where: {
       id: taskId,
-      user_id: userId,
     },
   });
 
@@ -133,10 +132,93 @@ export const deleteTask = async (userId: string, taskId: string) => {
 
   await prisma.task.delete({
     where: {
-        user_id: userId,
-        id: taskId
+        user_id: existingTask.user_id,
+        id: existingTask.id
     }
   })
 
   return {message: 'Task deletado com sucesso'}
 };
+
+export const toggleAllActive = async(userId: string, areaId: string) => {
+  const existingUser = await prisma.user.findUnique({
+    where: {
+      id: userId
+    }
+  })
+
+  if(!existingUser) {
+    throw new Error ("Usuário não encontrado")
+  }
+
+  const updatedTasks = await prisma.task.updateMany({
+    where: {
+      area_id: areaId,
+      is_completed: true,
+      is_active: true,
+    },
+    data: {
+      is_active: false
+    }
+  })
+
+  return updatedTasks
+}
+
+export const getTasksByDate = async(userId: string) => {
+  const today = new Date();
+  const todayInit = startOfDay(today);
+  const tomorrowInit = startOfDay(addDays(today, 1))
+  const existingUser = await prisma.user.findUnique({
+    where: {
+      id: userId
+    }
+  })
+
+  if(!existingUser) {
+    throw new Error ("Usuário não encontrado");
+  }
+
+  const findTodayTasks = await prisma.task.findMany({
+    where: {
+      is_completed: false,
+      due_date: {
+        gte: todayInit,
+        lt: tomorrowInit
+      }
+    },
+    orderBy: {
+      due_date: 'desc'
+    }
+  })
+
+  const tomorrowFinish = startOfDay(addDays(today, 2))
+
+  const findTomorrowTasks = await prisma.task.findMany({
+    where: {
+      is_completed: false,
+      due_date: {
+        gte: tomorrowInit,
+        lt: tomorrowFinish
+      }
+    },
+    orderBy: {
+      due_date: 'desc'
+    }
+  })
+
+  const findTasksWithoutDate = await prisma.task.findMany({
+    where: {
+      is_completed: false,
+      due_date: null
+    }
+  })
+
+  const returnObject = {
+    findTodayTasks,
+    findTomorrowTasks,
+    findTasksWithoutDate
+  }
+
+  return returnObject
+}

@@ -1,95 +1,58 @@
 import prisma from "../../lib/prisma.js";
-
-interface createAreasDataType {
-    userId: string;
-    name: [string];
-    emoji?: string;
-}
-
-interface createAreaDataType {
-    userId: string;
-    name: string;
-    emoji?: string;
-}
-
-interface updateDataType {
-    areaId: string;
-    userId: string;
-    name?: string;
-    emoji?: string;
-}
-
-interface deleteDataType {
-    areaId: string;
-    userId: string;
-}
-
-export const createAreas = async(areaData: createAreasDataType) => {
+export const createAreas = async (areaData) => {
     const user = await prisma.user.findUnique({
         where: {
             id: areaData.userId
         }
-    })
-
-    if(!user) {
-        throw new Error('Usuário não encontrado')
+    });
+    if (!user) {
+        throw new Error('Usuário não encontrado');
     }
-
     const newAreas = await prisma.area.createMany({
         data: areaData.name.map((name) => ({
             user_id: areaData.userId,
             name,
             emoji: areaData.emoji || null
         }))
-    })
-
+    });
     return newAreas;
-}
-
-export const createArea = async(areaData: createAreaDataType) => {
+};
+export const createArea = async (areaData) => {
     const user = await prisma.user.findUnique({
         where: {
             id: areaData.userId
         }
-    })
-
-    if(!user) {
-        throw new Error('Usuário não encontrado')
+    });
+    if (!user) {
+        throw new Error('Usuário não encontrado');
     }
-
     const newArea = await prisma.area.create({
         data: {
             user_id: areaData.userId,
             name: areaData.name,
             emoji: areaData.emoji || null
         }
-    })
-
+    });
     return newArea;
-}
-
-export const updateArea = async(areaData: updateDataType) => {
+};
+export const updateArea = async (areaData) => {
     const user = await prisma.user.findUnique({
         where: {
             id: areaData.userId
         }
-    })
-
-    if(!user) {
+    });
+    if (!user) {
         throw new Error('Usuário não encontrado');
     }
-
     const area = await prisma.area.findUnique({
         where: {
             user_id: areaData.userId,
             id: areaData.areaId
         }
-    })
-
-    if(!area) {
+    });
+    if (!area) {
         throw new Error('Área não encontrada');
     }
-
     const updatedArea = await prisma.area.update({
         where: {
             id: areaData.areaId
@@ -98,47 +61,38 @@ export const updateArea = async(areaData: updateDataType) => {
             name: areaData.name || area.name,
             emoji: areaData.emoji || area.emoji
         }
-    })
-
+    });
     return updatedArea;
-}
-
-export const deleteArea = async(areaId: string, userId: string) => {
+};
+export const deleteArea = async (areaId, userId) => {
     const user = await prisma.user.findUnique({
         where: {
             id: userId
         }
-    })
-
-    if(!user) {
+    });
+    if (!user) {
         throw new Error('Usuário não encontrado');
     }
-
     await prisma.area.delete({
         where: {
             user_id: userId,
             id: areaId
         }
-    })
-
-    return {message: 'Área deletada com sucesso'};
-}
-
-export const listAreasByUserId = async(userId: string) => {
+    });
+    return { message: 'Área deletada com sucesso' };
+};
+export const listAreasByUserId = async (userId) => {
     const areas = await prisma.area.findMany({
         where: {
             user_id: userId
         }
-    })
-
-    if(!areas) {
+    });
+    if (!areas) {
         throw new Error('Nenhuma área encontrada');
     }
-
     return areas;
-}
-
-export const tasksWithArea = async(userId: string) => {
+};
+export const tasksWithArea = async (userId) => {
     const areas = await prisma.area.findMany({
         where: {
             user_id: userId
@@ -150,29 +104,9 @@ export const tasksWithArea = async(userId: string) => {
                 }
             }
         }
-    })
-
-    if(!areas) {
-        throw new Error ('Areas ou tasks não encontradas')
+    });
+    if (!areas) {
+        throw new Error('Areas ou tasks não encontradas');
     }
-
-    return areas
-}
-
-export const areaEmojiHash = async(userId: string) => {
-    const areas = await prisma.area.findMany({
-        where: {
-            user_id: userId
-        },
-        select: {
-            id: true,
-            emoji: true
-        }
-    })
-
-    if(!areas) {
-        throw new Error ('Areas não encontradas')
-    }
-
-    return areas
-}
+    return areas;
+};

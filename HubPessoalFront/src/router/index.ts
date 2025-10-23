@@ -5,13 +5,13 @@ const routes = [
     path: '/',
     name: 'login',
     component: () => import('../views/LoginView.vue'),
-    meta: { requiresAuth: false },
+    meta: { requiresAuth: false, hideLayout: true },
   },
   {
     path: '/register',
     name: 'register',
     component: () => import('../views/RegisterView.vue'),
-    meta: { requiresAuth: false },
+    meta: { requiresAuth: false, hideLayout: true },
   },
   {
     path: '/home',
@@ -23,6 +23,18 @@ const routes = [
     path: '/onboarding',
     name: 'onboarding',
     component: () => import('../views/OnboardingView.vue'),
+    meta: { requiresAuth: true, hideLayout: true },
+  },
+  {
+    path: '/areas',
+    name: 'areas',
+    component: () => import('../views/AreaView.vue'),
+    meta: { requiresAuth: true },
+  },
+  {
+    path: '/tasks',
+    name: 'tasks',
+    component: () => import('../views/TasksView.vue'),
     meta: { requiresAuth: true },
   },
 ]

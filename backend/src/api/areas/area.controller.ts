@@ -73,3 +73,35 @@ export const getAreasByUserId = async (req: Request, res: Response) => {
         res.status(400).json({message: error.message})
     }
 }
+
+export const getAreasWithTasks = async (req: Request, res: Response) => {
+    try {
+        const userId = req.query.userId;
+
+        if(!userId) {
+            throw new Error('ID do usuário não fornecido')
+        }
+
+        const getAreasWithTasks = await areaService.tasksWithArea(userId.toString())
+
+        res.status(200).json(getAreasWithTasks)
+    } catch(error: any) {
+        res.status(400).json({message: error.message})
+    }
+}
+
+export const getEmojiHash = async(req: Request, res: Response) => {
+    try {
+        const userId = req.query.userId
+
+        if(!userId) {
+            throw new Error('ID do usuário não encontrado')
+        }
+        
+        const emojiHash = await areaService.areaEmojiHash(userId.toString())
+
+        res.status(200).json(emojiHash)
+    } catch(error: any) {
+        res.status(400).json({message: error.message})
+    }
+}

@@ -1,29 +1,13 @@
 <template>
   <v-container class="height-screen d-flex flex-column" fluid>
-    <h1 class="text-center animated-title">Bem vindo {{ name }}!</h1>
+    <h1 class="text-center animated-title">Gerencie suas áreas</h1>
+    <AreasManager />
   </v-container>
 </template>
-
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
-import { getUser } from '@/services/UserService'
-
-const name = ref('')
-
-async function getUserName() {
-  const userId = localStorage.getItem('userId')
-  if (!userId) return
-  const responseData = await getUser({ userId })
-  name.value = responseData.full_name
-  localStorage.setItem('userName', name.value)
-}
-
-onMounted(async () => {
-  await getUserName()
-})
+import AreasManager from '@/components/AreasManager.vue'
 </script>
-
-<style scoped>
+<style lang="css" scoped>
 .animated-title {
   font-size: 2.5rem;
   color: #212121;
